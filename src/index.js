@@ -10,24 +10,10 @@ let config = {
     fallback_language: 'en-US',
     date_locale: null,
     lang: null,
-    translations: {}
+    translations: {},
+    extend_with: null
 };
 
-function setConfig(config_opts) {
-    config = Object.assign({}, config, config_opts);
-    if (config.date_locale) {
-        moment.locale(config.date_locale);
-    } else {
-        moment.locale(config.lang);
-    }
-    if (!config.lang) {
-        config.warn("No lang specified, defaulting to fallback language: " + config.fallback_language + ".");
-        config.lang = config.fallback_language;
-    }
-}
-function getConfig() {
-    return Object.assign({}, config);
-}
 
 
 
@@ -357,7 +343,12 @@ function format(value, options) {
 
 
 
-export default {
+
+
+
+
+
+let funcs = {
     dateToMoment: dateToMoment,
     format: format,
     formatDateAsString: formatDateAsString,
@@ -371,3 +362,28 @@ export default {
     setConfig: setConfig,
     translate: translate,
 };
+
+let exported_funcs = {};
+
+function setConfig(config_opts) {
+    config = Object.assign({}, config, config_opts);
+    if (config.date_locale) {
+        moment.locale(config.date_locale);
+    } else {
+        moment.locale(config.lang);
+    }
+    if (!config.lang) {
+        config.warn("No lang specified, defaulting to fallback language: " + config.fallback_language + ".");
+        config.lang = config.fallback_language;
+    }
+    exported_funcs = Object.assign(exported_funcs, config.extend_with, funcs);
+}
+function getConfig() {
+    return Object.assign({}, config);
+}
+
+
+
+
+
+export default exported_funcs;
