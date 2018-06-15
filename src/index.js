@@ -10,7 +10,7 @@ let config = {
     fallback_language: 'en-US',
     date_locale: null,
     lang: null,
-    translations: {},
+    dictionaries: [],
     extend_with: null
 };
 
@@ -26,7 +26,7 @@ let config = {
 function translate(str, capitalize = true, language = null, empty_on_error = false, dictionary = null) {
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : config.fallback_language;
     let lang = language || config.lang;
-    dictionary = dictionary || config.translations;
+    dictionary = dictionary || translations;
 
     if (!dictionary) {
         console.error("Dictionary not defined.");
@@ -69,7 +69,7 @@ function doTranslationCheck(key, dictionary, lang, empty_on_error = false) {
             return key + "";
         }
 
-        translation = translations[config.fallback_language][key];
+        translation = dictionary[config.fallback_language][key];
         if (!translation) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
             if (empty_on_error) {
@@ -344,17 +344,48 @@ function format(value, options) {
 
 
 
+function updateTranslations(dictionary_arr, overwrite = true, warn = true) {
+    translations = {};
+    dictionary_arr.forEach((dict, dict_index) => {
+        let langs = Object.keys(dict);
+        langs.forEach((lang) => {
+            if (translations.hasOwnProperty(lang) === false) {
+                translations[lang] = Object.assign({}, dict[lang]);
+            } else {
+                if (warn || overwrite) {
+                    let updated_lang_translations = Object.assign({}, translations[lang]);
+                    Object.keys(dict[lang]).forEach((translation_key) => { 
+                        if (updated_lang_translations.hasOwnProperty(translation_key)) {
+                            if (warn) {
+                                console.warn("oh: Dictionary " + dict_index + " is conflicting with existing key '" + translation_key + "'.");
+                            }
+                            if (overwrite) {
+                                updated_lang_translations[translation_key] = dict[lang][translation_key];
+                            }
+                        }
+                    });
+                    translations[lang] = updated_lang_translations;
+                } else {
+                    translations[lang] = Object.assign({}, translations[lang], dict[lang]);
+                }
+            }
+        });
+    });
+}
 
-
-
+function addDictionary(dictionary) {
+    config.dictionaries.push(dictionary);
+    updateTranslations(config.dictionaries);
+}
 
 let funcs = {
+    addDictionary: addDictionary,
     dateToMoment: dateToMoment,
     format: format,
     formatDateAsString: formatDateAsString,
     formatDateAsTimeString: formatDateAsTimeString,
     formatSecondsToMS: formatSecondsToMS,
-    getConfig: getConfig,
+    getCurrentConfig: getCurrentConfig,
     getDateLocale: getDateLocale,
     roundDownTo: roundDownTo,
     roundTo: roundTo,
@@ -376,9 +407,16 @@ function setConfig(config_opts) {
         config.warn("No lang specified, defaulting to fallback language: " + config.fallback_language + ".");
         config.lang = config.fallback_language;
     }
+    if (Array.isArray(config.dictionaries) === false) {
+        config.error("oh: 'dictionaries' prop required to be an array.");
+        config.dictionaries = [];
+        translations = {};
+    }
+    updateTranslations(config.dictionaries);
     exported_funcs = Object.assign(exported_funcs, config.extend_with, funcs);
 }
-function getConfig() {
+
+function getCurrentConfig() {
     return Object.assign({}, config);
 }
 
