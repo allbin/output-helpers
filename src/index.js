@@ -342,29 +342,39 @@ function format(value, options) {
 
 
 
-function updateTranslations(dictionary_arr, overwrite = true, warn = true) {
+function updateTranslations(dictionary_arr, warn = true, overwrite = true) {
     translations = {};
     dictionary_arr.forEach((dict, dict_index) => {
+        let prefix = dict.hasOwnProperty('prefix') ? dict.prefix : "";
         let langs = Object.keys(dict);
         langs.forEach((lang) => {
             if (translations.hasOwnProperty(lang) === false) {
-                translations[lang] = Object.assign({}, dict[lang]);
+                let new_lang_translations = {};
+                Object.keys(dict[lang]).forEach((key) => {
+                    new_lang_translations[prefix + key] = dict[lang][key];
+                });
+                translations[lang] = new_lang_translations;
+                
             } else {
-                if (warn || overwrite) {
+                if (warn || !overwrite) {
                     let updated_lang_translations = Object.assign({}, translations[lang]);
                     Object.keys(dict[lang]).forEach((translation_key) => { 
-                        if (updated_lang_translations.hasOwnProperty(translation_key)) {
+                        if (updated_lang_translations.hasOwnProperty(prefix + translation_key)) {
                             if (warn) {
-                                console.warn("oh: Dictionary " + dict_index + " is conflicting with existing key '" + translation_key + "'.");
+                                console.warn("oh: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
                             }
                             if (overwrite) {
-                                updated_lang_translations[translation_key] = dict[lang][translation_key];
+                                updated_lang_translations[prefix + translation_key] = dict[lang][translation_key];
                             }
                         }
                     });
                     translations[lang] = updated_lang_translations;
                 } else {
-                    translations[lang] = Object.assign({}, translations[lang], dict[lang]);
+                    let new_lang_translations = {};
+                    Object.keys(dict[lang]).forEach((key) => {
+                        new_lang_translations[prefix + key] = dict[lang][key];
+                    });
+                    translations[lang] = Object.assign({}, translations[lang], new_lang_translations);
                 }
             }
         });
