@@ -9,7 +9,7 @@ let translations = {};
 let default_config = {
     fallback_language: 'en-US',
     date_locale: null,
-    lang: null,
+    lang: 'en-US',
     dictionaries: [],
     extend_with: null
 };
