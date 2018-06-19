@@ -430,7 +430,7 @@ var funcs = {
     translate: translate
 };
 
-var exported_funcs = {};
+var exported_funcs = Object.assign({}, funcs);
 
 function setConfig(config_opts) {
     Object.keys(config_opts).forEach(function (key) {
