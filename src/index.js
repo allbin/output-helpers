@@ -6,16 +6,14 @@ moment.defineLocale('en-US', getDateLocale('en-US'));
 moment.locale('en-US');
 
 let translations = {};
-let config = {
+let default_config = {
     fallback_language: 'en-US',
     date_locale: null,
     lang: null,
     dictionaries: [],
     extend_with: null
 };
-
-
-
+let config = Object.assign({}, default_config);
 
 
 
@@ -397,21 +395,32 @@ let funcs = {
 let exported_funcs = {};
 
 function setConfig(config_opts) {
+    Object.keys(config_opts).forEach((key) => {
+        if (key === "dictionaries") {
+            console.warn("OH: setConfig has overwritten all previous dictionaries. To add dictionaries use 'OH.addDictionary()'");
+            return;
+        }
+        if (config[key] !== default_config[key]) {
+            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
+        }
+    });
     config = Object.assign({}, config, config_opts);
+
     if (config.date_locale) {
         moment.locale(config.date_locale);
     } else {
         moment.locale(config.lang);
     }
     if (!config.lang) {
-        config.warn("No lang specified, defaulting to fallback language: " + config.fallback_language + ".");
+        config.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
         config.lang = config.fallback_language;
     }
     if (Array.isArray(config.dictionaries) === false) {
-        config.error("oh: 'dictionaries' prop required to be an array.");
+        config.error("OH: 'dictionaries' prop required to be an array.");
         config.dictionaries = [];
         translations = {};
     }
+
     updateTranslations(config.dictionaries);
     exported_funcs = Object.assign(exported_funcs, config.extend_with, funcs);
 }
