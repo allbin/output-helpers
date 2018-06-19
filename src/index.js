@@ -402,7 +402,7 @@ let funcs = {
     translate: translate,
 };
 
-let exported_funcs = {};
+let exported_funcs = Object.assign({}, funcs);
 
 function setConfig(config_opts) {
     Object.keys(config_opts).forEach((key) => {
