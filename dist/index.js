@@ -17,13 +17,14 @@ _moment2.default.defineLocale('en-US', getDateLocale('en-US'));
 _moment2.default.locale('en-US');
 
 var translations = {};
-var config = {
+var default_config = {
     fallback_language: 'en-US',
     date_locale: null,
     lang: null,
     dictionaries: [],
     extend_with: null
 };
+var config = Object.assign({}, default_config);
 
 //////////////////
 //STRINGS
@@ -423,21 +424,32 @@ var funcs = {
 var exported_funcs = {};
 
 function setConfig(config_opts) {
+    Object.keys(config_opts).forEach(function (key) {
+        if (key === "dictionaries") {
+            console.warn("OH: setConfig has overwritten all previous dictionaries. To add dictionaries use 'OH.addDictionary()'");
+            return;
+        }
+        if (config[key] !== default_config[key]) {
+            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
+        }
+    });
     config = Object.assign({}, config, config_opts);
+
     if (config.date_locale) {
         _moment2.default.locale(config.date_locale);
     } else {
         _moment2.default.locale(config.lang);
     }
     if (!config.lang) {
-        config.warn("No lang specified, defaulting to fallback language: " + config.fallback_language + ".");
+        config.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
         config.lang = config.fallback_language;
     }
     if (Array.isArray(config.dictionaries) === false) {
-        config.error("oh: 'dictionaries' prop required to be an array.");
+        config.error("OH: 'dictionaries' prop required to be an array.");
         config.dictionaries = [];
         translations = {};
     }
+
     updateTranslations(config.dictionaries);
     exported_funcs = Object.assign(exported_funcs, config.extend_with, funcs);
 }
