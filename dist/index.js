@@ -422,6 +422,7 @@ var funcs = {
     formatSecondsToMS: formatSecondsToMS,
     getCurrentConfig: getCurrentConfig,
     getDateLocale: getDateLocale,
+    getFallbackLang: getFallbackLang,
     getLang: getLang,
     roundDownTo: roundDownTo,
     roundTo: roundTo,
@@ -469,6 +470,9 @@ function getCurrentConfig() {
 
 function getLang() {
     return config.lang;
+}
+function getFallbackLang() {
+    return config.fallback_language;
 }
 
 exports.default = exported_funcs;
