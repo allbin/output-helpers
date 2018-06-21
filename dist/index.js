@@ -152,9 +152,8 @@ function dateToMoment(d) {
 function getDateLocale() {
     var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-    var fallback_language = "en-US";
-    var lang_in_jwt = window.sso && window.sso.isLoggedIn() ? window.sso.getJWT().getClaim("lang") : fallback_language;
-    var lang = language || lang_in_jwt;
+    // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : fallback_language;
+    var lang = language || config.lang;
 
     var date_locales = {
         "sv-SE": {
@@ -183,11 +182,11 @@ function getDateLocale() {
 
     if (date_locales.hasOwnProperty(lang)) {
         return date_locales[lang];
-    } else if (date_locales.hasOwnProperty(fallback_language)) {
-        console.error("Missing date locales for lang '" + lang + "', returning fallback language '" + fallback_language + "'.");
-        return date_locales[fallback_language];
+    } else if (date_locales.hasOwnProperty(config.fallback_language)) {
+        console.error("Missing date locales for lang '" + lang + "', returning fallback language '" + config.fallback_language + "'.");
+        return date_locales[config.fallback_language];
     }
-    console.error("Missing date locales for lang '" + lang + "' and fallback language '" + fallback_language + "'. Returning null.");
+    console.error("Missing date locales for lang '" + lang + "' and fallback language '" + config.fallback_language + "'. Returning null.");
     return null;
 }
 
@@ -389,7 +388,7 @@ function updateTranslations(dictionary_arr) {
                     Object.keys(dict[lang]).forEach(function (translation_key) {
                         if (updated_lang_translations.hasOwnProperty(prefix + translation_key)) {
                             if (warn) {
-                                console.warn("oh: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
+                                console.warn("OH: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
                             }
                             if (overwrite) {
                                 updated_lang_translations[prefix + translation_key] = dict[lang][translation_key];
@@ -423,6 +422,7 @@ var funcs = {
     formatSecondsToMS: formatSecondsToMS,
     getCurrentConfig: getCurrentConfig,
     getDateLocale: getDateLocale,
+    getLang: getLang,
     roundDownTo: roundDownTo,
     roundTo: roundTo,
     roundUpTo: roundUpTo,
@@ -465,6 +465,10 @@ function setConfig(config_opts) {
 
 function getCurrentConfig() {
     return Object.assign({}, config);
+}
+
+function getLang() {
+    return config.lang;
 }
 
 exports.default = exported_funcs;
