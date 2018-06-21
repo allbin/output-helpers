@@ -11,10 +11,8 @@
     },
     "author": "",
     "license": "ISC",
-    "dependencies": {
-        "moment": "2.22.2"
-    },
     "devDependencies": {
+        "moment": "2.22.2",
         "babel-core": "6.26.3",
         "babel-eslint": "8.2.3",
         "babel-preset-env": "1.7.0",
@@ -27,5 +25,8 @@
         "gulp-bump": "3.1.1",
         "gulp-allbin": "git+https://bitbucket.org/allbin/gulp-allbin.git#v0.0.6",
         "gulp-eslint": "4.0.2"
+    },
+    "peerDependencies": {
+        "moment": "2.x"
     }
 }
