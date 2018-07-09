@@ -15,7 +15,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _moment2.default.defineLocale('sv-SE', getDateLocale('sv-SE'));
 _moment2.default.defineLocale('en-US', getDateLocale('en-US'));
 _moment2.default.locale('en-US');
-
 var translations = {};
 var default_config = {
     fallback_language: 'en-US',
@@ -25,10 +24,8 @@ var default_config = {
     extend_with: null
 };
 var config = Object.assign({}, default_config);
-
 //////////////////
 //STRINGS
-
 function translate(str) {
     var capitalize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var language = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -38,25 +35,20 @@ function translate(str) {
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : config.fallback_language;
     var lang = language || config.lang;
     dictionary = dictionary || translations;
-
     if (!dictionary) {
         console.error("Dictionary not defined.");
         return str;
     }
-
     if (!str || str.length === 0) {
         console.error("Tried to translate undefined string.");
         return "";
     }
-
     var translation = doTranslationCheck(str, dictionary, lang, empty_on_error);
-
     if (capitalize === true) {
         return capitalizeString(translation);
     }
     return translation;
 }
-
 function doTranslationCheck(key, dictionary, lang) {
     var empty_on_error = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
@@ -71,7 +63,6 @@ function doTranslationCheck(key, dictionary, lang) {
         }
         lang = config.fallback_language;
     }
-
     var translation = dictionary[lang][key];
     if (!translation) {
         if (lang === config.fallback_language) {
@@ -81,7 +72,6 @@ function doTranslationCheck(key, dictionary, lang) {
             }
             return key + "";
         }
-
         translation = dictionary[config.fallback_language][key];
         if (!translation) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
@@ -90,32 +80,27 @@ function doTranslationCheck(key, dictionary, lang) {
             }
             return key + "";
         }
-
         console.warn("No translation found for '" + key + "' for '" + lang + "'. Returning fallback language.");
     }
-
     return translation;
 }
-
 function capitalizeString(str) {
     var force_lower = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     if (typeof str !== "string") {
-        console.warn("Capitalize err: input not a string.");return "";
+        console.warn("Capitalize err: input not a string.");
+        return "";
     }
     if (str.length < 1) {
         return "";
     }
-
     if (force_lower) {
         return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
     }
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
 ///////////////
 //DATE and TIME
-
 function formatDateAsString(d) {
     var output_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "YYYY-MM-DD HH:mm";
     var input_format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -123,7 +108,6 @@ function formatDateAsString(d) {
     if (_moment2.default.isMoment(d)) {
         return d.format(output_format);
     }
-
     if (typeof d === "string") {
         if (input_format) {
             d = (0, _moment2.default)(d, input_format);
@@ -138,23 +122,19 @@ function formatDateAsString(d) {
     }
     return d.format(output_format);
 }
-
 function formatDateAsTimeString(d) {
     var input_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
     return formatDateAsString(d, "HH:mm", input_format);
 }
-
 function dateToMoment(d) {
     return (0, _moment2.default)(d);
 }
-
 function getDateLocale() {
     var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : fallback_language;
     var lang = language || config.lang;
-
     var date_locales = {
         "sv-SE": {
             months: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"],
@@ -179,7 +159,6 @@ function getDateLocale() {
             }
         }
     };
-
     if (date_locales.hasOwnProperty(lang)) {
         return date_locales[lang];
     } else if (date_locales.hasOwnProperty(config.fallback_language)) {
@@ -189,7 +168,6 @@ function getDateLocale() {
     console.error("Missing date locales for lang '" + lang + "' and fallback language '" + config.fallback_language + "'. Returning null.");
     return null;
 }
-
 function formatSecondsToMS(value) {
     var alwaysInclude = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "none";
     var padding = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -203,13 +181,10 @@ function formatSecondsToMS(value) {
     // "both" - Will always prepend and append "0m" and "0s" respectively as needed.
     //padding <bool> toggles if values should be padded so 4 becomes 04. Both minutes and seconds will be padded.
     //colon <bool> changes the format to be mm:ss instead of "mmMssS". Will always include both minutes and seconds, always padding.
-
     var minutes = value > 0 ? Math.floor(value / 60) : Math.ceil(value / 60);
     var seconds = value % 60;
-
     var m_str = "";
     var s_str = "";
-
     if (padding || colon) {
         m_str = this.format(minutes, { padding: 2 });
         s_str = this.format(seconds, { padding: 2 });
@@ -217,11 +192,9 @@ function formatSecondsToMS(value) {
         m_str = minutes + ""; //Ensure string.
         s_str = seconds + ""; //Ensure string.
     }
-
     if (colon) {
         return m_str + ":" + s_str;
     }
-
     if (alwaysInclude === "none") {
         if (minutes !== 0 && seconds !== 0) {
             return m_str + "m" + s_str + "s";
@@ -242,10 +215,8 @@ function formatSecondsToMS(value) {
     }
     return m_str + "m" + s_str + "s";
 }
-
 ////////////////
 //Numeric
-
 function roundTo(value) {
     var round_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
@@ -257,7 +228,6 @@ function roundTo(value) {
     value = value.toString().split('e');
     return +(value[0] + 'e' + (value[1] ? +value[1] + round_exp : round_exp));
 }
-
 function roundUpTo(value) {
     var ceil_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
@@ -269,7 +239,6 @@ function roundUpTo(value) {
     value = value.toString().split('e');
     return +(value[0] + 'e' + (value[1] ? +value[1] + ceil_exp : ceil_exp));
 }
-
 function roundDownTo(value) {
     var floor_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
@@ -281,7 +250,6 @@ function roundDownTo(value) {
     value = value.toString().split('e');
     return +(value[0] + 'e' + (value[1] ? +value[1] + floor_exp : floor_exp));
 }
-
 function format(value, options) {
     var str = void 0;
     var round = typeof options.round === "number" || false;
@@ -298,14 +266,11 @@ function format(value, options) {
     var pad_length = options.padding;
     var trunc = options.trunc === true || false;
     var grouping = options.grouping === true || false;
-
     var is_negative = value < 0;
-
     if (typeof value !== "number") {
         console.warn("Tried to format a value but input was typeof: ", typeof value === 'undefined' ? 'undefined' : _typeof(value));
         return value;
     }
-
     if (round && !ceil && !floor) {
         value = this.roundTo(value, round_exp);
     }
@@ -315,13 +280,11 @@ function format(value, options) {
     if (floor) {
         value = this.roundDownTo(value, floor_exp);
     }
-
     if (trunc && !round && !fixed) {
         str = Math.trunc(value);
     } else {
         str = value.toString();
     }
-
     if (grouping) {
         if (is_negative) {
             //Remove minus sign if negative.
@@ -342,13 +305,11 @@ function format(value, options) {
             str = "-" + str;
         }
     }
-
     if (separate_padding) {
         str = str.split(".");
         if (str[0].length < i_pad_length) {
             str[0] = ("000000000000000000000" + str[0]).slice(-i_pad_length);
         }
-
         if (str.length > 1 && str[1].length < d_pad_length) {
             str[1] = (str[1] + "000000000000000000000").slice(0, d_pad_length);
             str.join(".");
@@ -363,10 +324,8 @@ function format(value, options) {
             str = (str + "000000000000000000000").slice(0, pad_length);
         }
     }
-
     return str;
 }
-
 function updateTranslations(dictionary_arr) {
     var warn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var overwrite = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
@@ -407,12 +366,10 @@ function updateTranslations(dictionary_arr) {
         });
     });
 }
-
 function addDictionary(dictionary) {
     config.dictionaries.push(dictionary);
     updateTranslations(config.dictionaries);
 }
-
 var funcs = {
     addDictionary: addDictionary,
     dateToMoment: dateToMoment,
@@ -430,9 +387,7 @@ var funcs = {
     setConfig: setConfig,
     translate: translate
 };
-
 var exported_funcs = Object.assign({}, funcs);
-
 function setConfig(config_opts) {
     Object.keys(config_opts).forEach(function (key) {
         if (key === "dictionaries") {
@@ -444,7 +399,6 @@ function setConfig(config_opts) {
         }
     });
     config = Object.assign({}, config, config_opts);
-
     if (config.date_locale) {
         _moment2.default.locale(config.date_locale);
     } else {
@@ -459,20 +413,17 @@ function setConfig(config_opts) {
         config.dictionaries = [];
         translations = {};
     }
-
     updateTranslations(config.dictionaries);
     exported_funcs = Object.assign(exported_funcs, config.extend_with, funcs);
 }
-
 function getCurrentConfig() {
     return Object.assign({}, config);
 }
-
 function getLang() {
     return config.lang;
 }
 function getFallbackLang() {
     return config.fallback_language;
 }
-
 exports.default = exported_funcs;
+//# sourceMappingURL=index.js.map
