@@ -1,14 +1,25 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es6", 
+        "moduleResolution": "node",
         "lib": [
-            "es7"
+            "es7",
+            "dom"
         ],
-        "allowJs": true,
+        "declaration": true,
+        "declarationDir": "dist",
         "sourceMap": true,
         "strict": true,
         "noUnusedLocals": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true
-    }
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        ".vscode-test"
+    ]
 }

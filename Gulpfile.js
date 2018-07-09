@@ -11,7 +11,7 @@ let tsProject = ts.createProject('./tsconfig.json');
 // gulp.task('release:minor', allbin.buildBumpMinorPush());
 // gulp.task('release:major', allbin.buildBumpMajorPush());
 
-gulp.task('build', function() {
+gulp.task('build', function () {
     return gulp.src(['src/**/*.ts', 'src/**/*.js'])
         .pipe(sourcemaps.init())
         .pipe(tsProject())
