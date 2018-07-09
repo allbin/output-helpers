@@ -7,13 +7,11 @@ let babel = require('gulp-babel');
 let tsProject = ts.createProject('./tsconfig.json');
 
 
-gulp.task('release', allbin.buildBumpPatchPush());
-gulp.task('release:minor', allbin.buildBumpMinorPush());
-gulp.task('release:major', allbin.buildBumpMajorPush());
+// gulp.task('release', allbin.buildBumpPatchPush());
+// gulp.task('release:minor', allbin.buildBumpMinorPush());
+// gulp.task('release:major', allbin.buildBumpMajorPush());
 
-
-
-gulp.task('releasets', function() {
+gulp.task('build', function() {
     return gulp.src(['src/**/*.ts', 'src/**/*.js'])
         .pipe(sourcemaps.init())
         .pipe(tsProject())
@@ -23,3 +21,11 @@ gulp.task('releasets', function() {
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
 });
+
+gulp.task('release:patch', allbin.tagAndPush(["package.json", "dist"], "patch"));
+gulp.task('release:minor', allbin.tagAndPush(["package.json", "dist"], "minor"));
+gulp.task('release:major', allbin.tagAndPush(["package.json", "dist"], "major"));
+
+gulp.task('buildAndReleasePatch', gulp.series('build', 'relase:patch'));
+gulp.task('buildAndReleaseMinor', gulp.series('build', 'relase:minor'));
+gulp.task('buildAndReleaseMajor', gulp.series('build', 'relase:major'));
