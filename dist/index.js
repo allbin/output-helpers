@@ -17,13 +17,14 @@ _moment2.default.defineLocale('en-US', getDateLocale('en-US'));
 _moment2.default.locale('en-US');
 var translations = {};
 var default_config = {
-    fallback_language: 'en-US',
     date_locale: null,
-    lang: 'en-US',
     dictionaries: [],
-    extend_with: null
+    extend_with: null,
+    fallback_language: 'en-US',
+    lang: 'en-US'
 };
 var config = Object.assign({}, default_config);
+var supported_languages = ['sv-SE', 'en-US'];
 //////////////////
 //STRINGS
 function translate(str) {
@@ -165,8 +166,7 @@ function getDateLocale() {
         console.error("Missing date locales for lang '" + lang + "', returning fallback language '" + config.fallback_language + "'.");
         return date_locales[config.fallback_language];
     }
-    console.error("Missing date locales for lang '" + lang + "' and fallback language '" + config.fallback_language + "'. Returning null.");
-    return null;
+    throw new Error("Missing date locales for lang '" + lang + "' and fallback language '" + config.fallback_language + "'. Returning null.");
 }
 function formatSecondsToMS(value) {
     var alwaysInclude = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "none";
@@ -186,8 +186,8 @@ function formatSecondsToMS(value) {
     var m_str = "";
     var s_str = "";
     if (padding || colon) {
-        m_str = this.format(minutes, { padding: 2 });
-        s_str = this.format(seconds, { padding: 2 });
+        m_str = format(minutes, { padding: 2 });
+        s_str = format(seconds, { padding: 2 });
     } else {
         m_str = minutes + ""; //Ensure string.
         s_str = seconds + ""; //Ensure string.
@@ -217,41 +217,45 @@ function formatSecondsToMS(value) {
 }
 ////////////////
 //Numeric
-function roundTo(value) {
+function roundTo(input) {
     var round_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
     if (round_exp === 0) {
-        return Math.round(value);
+        return Math.round(input);
     }
-    value = value.toString().split('e');
-    value = Math.round(+(value[0] + 'e' + (value[1] ? +value[1] - round_exp : -round_exp)));
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? +value[1] + round_exp : round_exp));
+    var stringified = [""];
+    stringified = input.toString().split('e');
+    var round = Math.round(+(stringified[0] + 'e' + (stringified[1] ? +stringified[1] - round_exp : -round_exp)));
+    stringified = round.toString().split('e');
+    return +(stringified[0] + 'e' + (stringified[1] ? +stringified[1] + round_exp : round_exp));
 }
-function roundUpTo(value) {
+function roundUpTo(input) {
     var ceil_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
     if (ceil_exp === 0) {
-        return Math.ceil(value);
+        return Math.ceil(input);
     }
-    value = value.toString().split('e');
-    value = Math.ceil(+(value[0] + 'e' + (value[1] ? +value[1] - ceil_exp : -ceil_exp)));
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? +value[1] + ceil_exp : ceil_exp));
+    var stringified = [""];
+    stringified = input.toString().split('e');
+    var ceil = Math.ceil(+(stringified[0] + 'e' + (stringified[1] ? +stringified[1] - ceil_exp : -ceil_exp)));
+    stringified = ceil.toString().split('e');
+    return +(stringified[0] + 'e' + (stringified[1] ? +stringified[1] + ceil_exp : ceil_exp));
 }
-function roundDownTo(value) {
+function roundDownTo(input) {
     var floor_exp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
     if (floor_exp === 0) {
-        return Math.floor(value);
+        return Math.floor(input);
     }
-    value = value.toString().split('e');
-    value = Math.floor(+(value[0] + 'e' + (value[1] ? +value[1] - floor_exp : -floor_exp)));
-    value = value.toString().split('e');
-    return +(value[0] + 'e' + (value[1] ? +value[1] + floor_exp : floor_exp));
+    var stringified = [""];
+    stringified = input.toString().split('e');
+    var floor = Math.floor(+(stringified[0] + 'e' + (stringified[1] ? +stringified[1] - floor_exp : -floor_exp)));
+    stringified = floor.toString().split('e');
+    return +(stringified[0] + 'e' + (stringified[1] ? +stringified[1] + floor_exp : floor_exp));
 }
 function format(value, options) {
     var str = void 0;
+    var str_arr = void 0;
     var round = typeof options.round === "number" || false;
     var round_exp = options.round;
     var ceil = typeof options.ceil === "number" || false;
@@ -272,16 +276,16 @@ function format(value, options) {
         return value;
     }
     if (round && !ceil && !floor) {
-        value = this.roundTo(value, round_exp);
+        value = roundTo(value, round_exp);
     }
     if (ceil && !floor) {
-        value = this.roundUpTo(value, ceil_exp);
+        value = roundUpTo(value, ceil_exp);
     }
     if (floor) {
-        value = this.roundDownTo(value, floor_exp);
+        value = roundDownTo(value, floor_exp);
     }
     if (trunc && !round && !fixed) {
-        str = Math.trunc(value);
+        str = Math.trunc(value).toString();
     } else {
         str = value.toString();
     }
@@ -291,14 +295,14 @@ function format(value, options) {
             str = str.substr(1);
         }
         var separated = str.split('.'); //We only want to group the value before the decimal point.
-        var arr = separated[0].split('');
+        str_arr = separated[0].split('');
         str = "";
-        while (arr.length > 3) {
-            str = " " + arr[arr.length - 3] + arr[arr.length - 2] + arr[arr.length - 1] + str;
-            arr = arr.slice(0, arr.length - 3);
+        while (str_arr.length > 3) {
+            str = " " + str_arr[str_arr.length - 3] + str_arr[str_arr.length - 2] + str_arr[str_arr.length - 1] + str;
+            str_arr = str_arr.slice(0, str_arr.length - 3);
         }
-        arr = arr.join("");
-        str = arr.length > 0 ? arr + str : str;
+        var joined_arr = str_arr.join("");
+        str = joined_arr.length > 0 ? joined_arr + str : str;
         str += separated.length > 1 ? "." + separated[1] : "";
         if (is_negative) {
             //Add minus sign if negative.
@@ -306,20 +310,22 @@ function format(value, options) {
         }
     }
     if (separate_padding) {
-        str = str.split(".");
-        if (str[0].length < i_pad_length) {
-            str[0] = ("000000000000000000000" + str[0]).slice(-i_pad_length);
+        str_arr = str.split(".");
+        if (i_pad_length && str_arr[0].length < i_pad_length) {
+            str_arr[0] = ("000000000000000000000" + str_arr[0]).slice(-i_pad_length);
         }
-        if (str.length > 1 && str[1].length < d_pad_length) {
-            str[1] = (str[1] + "000000000000000000000").slice(0, d_pad_length);
-            str.join(".");
-        } else if (str.length > 1) {
-            str = str[0] + "." + (str[1] + "00000000000000000").slice(0, d_pad_length);
-        } else {
-            str = str[0] + "." + "00000000000000000".slice(0, d_pad_length);
+        if (d_pad_length) {
+            if (str_arr.length > 1 && str_arr[1].length < d_pad_length) {
+                str_arr[1] = (str_arr[1] + "000000000000000000000").slice(0, d_pad_length);
+                str_arr.join(".");
+            } else if (str_arr.length > 1) {
+                str = str_arr[0] + "." + (str_arr[1] + "00000000000000000").slice(0, d_pad_length);
+            } else {
+                str = str_arr[0] + "." + "00000000000000000".slice(0, d_pad_length);
+            }
         }
     }
-    if (padding) {
+    if (padding && pad_length) {
         if (str.length < pad_length) {
             str = (str + "000000000000000000000").slice(0, pad_length);
         }
@@ -333,32 +339,41 @@ function updateTranslations(dictionary_arr) {
     translations = {};
     dictionary_arr.forEach(function (dict, dict_index) {
         var prefix = dict.hasOwnProperty('prefix') ? dict.prefix : "";
-        var langs = Object.keys(dict);
-        langs.forEach(function (lang) {
+        var keys = Object.keys(dict);
+        keys.forEach(function (potential_lang) {
+            if (supported_languages.includes(potential_lang) === false) {
+                return;
+            }
+            var lang = potential_lang;
+            var lang_in_dict = dict[lang];
+            if (!lang_in_dict) {
+                return;
+            }
+            var keys_for_lang = Object.keys(lang_in_dict);
             if (translations.hasOwnProperty(lang) === false) {
                 var new_lang_translations = {};
-                Object.keys(dict[lang]).forEach(function (key) {
-                    new_lang_translations[prefix + key] = dict[lang][key];
+                keys_for_lang.forEach(function (key) {
+                    new_lang_translations[prefix + key] = lang_in_dict[key];
                 });
                 translations[lang] = new_lang_translations;
             } else {
                 if (warn || !overwrite) {
                     var updated_lang_translations = Object.assign({}, translations[lang]);
-                    Object.keys(dict[lang]).forEach(function (translation_key) {
+                    keys_for_lang.forEach(function (translation_key) {
                         if (updated_lang_translations.hasOwnProperty(prefix + translation_key)) {
                             if (warn) {
                                 console.warn("OH: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
                             }
                             if (overwrite) {
-                                updated_lang_translations[prefix + translation_key] = dict[lang][translation_key];
+                                updated_lang_translations[prefix + translation_key] = lang_in_dict[translation_key];
                             }
                         }
                     });
                     translations[lang] = updated_lang_translations;
                 } else {
                     var _new_lang_translations = {};
-                    Object.keys(dict[lang]).forEach(function (key) {
-                        _new_lang_translations[prefix + key] = dict[lang][key];
+                    keys_for_lang.forEach(function (key) {
+                        _new_lang_translations[prefix + key] = lang_in_dict[key];
                     });
                     translations[lang] = Object.assign({}, translations[lang], _new_lang_translations);
                 }
@@ -391,7 +406,7 @@ var exported_funcs = Object.assign({}, funcs);
 function setConfig(config_opts) {
     Object.keys(config_opts).forEach(function (key) {
         if (key === "dictionaries") {
-            console.warn("OH: setConfig has overwritten all previous dictionaries. To add dictionaries use 'OH.addDictionary()'");
+            console.warn("OH: To add dictionaries use 'OH.addDictionary()'");
             return;
         }
         if (config[key] !== default_config[key]) {
@@ -405,11 +420,11 @@ function setConfig(config_opts) {
         _moment2.default.locale(config.lang);
     }
     if (!config.lang) {
-        config.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
+        console.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
         config.lang = config.fallback_language;
     }
     if (Array.isArray(config.dictionaries) === false) {
-        config.error("OH: 'dictionaries' prop required to be an array.");
+        console.error("OH: 'dictionaries' prop required to be an array.");
         config.dictionaries = [];
         translations = {};
     }

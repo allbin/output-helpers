@@ -7,7 +7,7 @@
         "release": "gulp4 buildAndReleasePatch",
         "release:minor": "gulp4 buildAndReleaseMinor",
         "release:major": "gulp4 buildAndReleaseMajor",
-        "releasets": "gulp4 releasets",
+        "build": "gulp4 build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
@@ -29,7 +29,9 @@
         "gulp4": "4.0.2",
         "typescript": "2.9.2",
         "moment": "2.22.2",
-        "vinyl-buffer": "1.0.1"
+        "vinyl-buffer": "1.0.1",
+        "tslint": "5.10.0",
+        "tslint-eslint-rules": "5.3.1"
     },
     "peerDependencies": {
         "moment": "2.x"
