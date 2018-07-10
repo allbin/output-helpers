@@ -2,14 +2,12 @@ import moment, { Moment } from 'moment';
 
 
 
-interface LooseObject {
-    [key: string]: any;
-}
 interface StrStrObject {
     [key: string]: string;
 }
 type LangId = "sv-SE"|"en-US";
 interface Dictionary {
+    [key: string]: any;
     "sv-SE"?: StrStrObject;
     "en-US"?: StrStrObject;
     prefix?: string;
@@ -93,7 +91,7 @@ function translate(str: string, capitalize: boolean = true, language: LangId|nul
     return translation;
 }
 
-function doTranslationCheck(key: string, dictionary: LooseObject, lang: string, empty_on_error: boolean = false) {
+function doTranslationCheck(key: string, dictionary: Dictionary, lang: string, empty_on_error: boolean = false) {
     if (dictionary.hasOwnProperty(lang) === false) {
         console.warn("Translation for language '" + lang +"' not supported, defaulting to: " + config.fallback_language);
         if (dictionary.hasOwnProperty(config.fallback_language) === false) {
@@ -115,8 +113,13 @@ function doTranslationCheck(key: string, dictionary: LooseObject, lang: string, 
             }
             return key + "";
         }
-
-        translation = dictionary[config.fallback_language][key];
+        const dict = dictionary[config.fallback_language];
+        if (dict) {
+            translation = dict[key];
+        } else {
+            translation = undefined;
+        }
+        
         if (!translation) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
             if (empty_on_error) {
@@ -480,15 +483,21 @@ let funcs = {
 let exported_funcs = Object.assign({}, funcs);
 
 function setConfig(config_opts: InputConfig) {
+    let invalid = false;
     Object.keys(config_opts).forEach((key) => {
-        if (key === "dictionaries") {
-            console.warn("OH: To add dictionaries use 'OH.addDictionary()'");
+        if (key === "dictionaries" && config.dictionaries.length > 0) {
+            console.warn("OH: To add dictionaries after initial setConfig use 'OH.addDictionary()'");
+            invalid = true;
             return;
         }
         if (config[key] !== default_config[key]) {
             console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
         }
     });
+    if (invalid) {
+        console.error("OH: Unable to setConfig, invalid settings.");
+        return;
+    }
     config = Object.assign({}, config, config_opts);
 
     if (config.date_locale) {
