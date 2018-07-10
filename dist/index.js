@@ -73,7 +73,12 @@ function doTranslationCheck(key, dictionary, lang) {
             }
             return key + "";
         }
-        translation = dictionary[config.fallback_language][key];
+        var dict = dictionary[config.fallback_language];
+        if (dict) {
+            translation = dict[key];
+        } else {
+            translation = undefined;
+        }
         if (!translation) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
             if (empty_on_error) {
@@ -404,15 +409,21 @@ var funcs = {
 };
 var exported_funcs = Object.assign({}, funcs);
 function setConfig(config_opts) {
+    var invalid = false;
     Object.keys(config_opts).forEach(function (key) {
-        if (key === "dictionaries") {
-            console.warn("OH: To add dictionaries use 'OH.addDictionary()'");
+        if (key === "dictionaries" && config.dictionaries.length > 0) {
+            console.warn("OH: To add dictionaries after initial setConfig use 'OH.addDictionary()'");
+            invalid = true;
             return;
         }
         if (config[key] !== default_config[key]) {
             console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
         }
     });
+    if (invalid) {
+        console.error("OH: Unable to setConfig, invalid settings.");
+        return;
+    }
     config = Object.assign({}, config, config_opts);
     if (config.date_locale) {
         _moment2.default.locale(config.date_locale);

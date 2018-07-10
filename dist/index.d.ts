@@ -4,6 +4,7 @@ interface StrStrObject {
 }
 declare type LangId = "sv-SE" | "en-US";
 interface Dictionary {
+    [key: string]: any;
     "sv-SE"?: StrStrObject;
     "en-US"?: StrStrObject;
     prefix?: string;
