@@ -443,6 +443,7 @@ function updateTranslations(dictionary_arr: Dictionary[], warn = true, overwrite
                                 updated_lang_translations[prefix + translation_key] = lang_in_dict[translation_key];
                             }
                         }
+                        updated_lang_translations[prefix + translation_key] = lang_in_dict[translation_key];
                     });
                     translations[lang] = updated_lang_translations;
                 } else {
