@@ -121,6 +121,13 @@ Ex: *roundUpTo(1345.341, 2)* > 1400
 ## oh.setConfig
 `oh.setConfig(config_options): undefined`
 
+Sets the config options. Should be an object with any of the following settings.
+
+`date_locale <"sv-SE"|"en-US", default same as *lang*>` - Specifies the locale used by Moment.  
+`fallback_language <"sv-SE"|"en-US", default "en-US">` - Fallback used by translate function if *lang* is not available.  
+`lang <"sv-SE"|"en-US", default "en-US">` - Default language used by translate function.  
+`extend_with <object, default null>` - An object to extend the OH object with. Use this to attach additional dynamic functionality to OH.
+
 ## oh.translate
 `oh.translate(key, capitalize, language, empty_on_error, dictionary): string`
 
@@ -139,4 +146,31 @@ Will use the configured language and dictionaries unless specified.
 >`dictionary <object, default to configured and added dictionaries>` - **See the `oh.addDictionary()` docs.**
 
 # Dictionary definition
+A dictionary an object with a key for each language supported by the dictionary. Each language should be an object with signature *key: string, value: string*.
 
+Optionally a prefix key can also be supplied, in which case it will be used to prefix every key in the dictionary to avoid collissions with other dictionaries keys.  
+***NOTE:** You will have to prefix all keys in your invokations of* oh.translate *with the same value. This can be done by wrapping the* oh.translate *function in a separate function which automatically adds the prefix.*
+
+### Example dictionary
+```
+{
+    sv-SE: {
+        email: "epost",
+        name: "namn",
+        ...
+    },
+    en-US: {
+        email: "email",
+        name: "name",
+        ...
+    },
+    prefix: "my-prefix"
+}
+```
+
+### Example wrapper
+```
+function translate(str) {
+    return oh.translate(prefix + str);
+}
+```
