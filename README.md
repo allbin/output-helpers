@@ -23,9 +23,23 @@ Converts a javascript date to a Moment.
 > `date <Date, required>` - The input javascript date to be converted.
 
 ## oh.format
-`oh.format(value): string`
+`oh.format(value, options): string`
 
 > `value <number, required>` - The value to be formatted.
+
+> `options <object, default {}>` - An object with optional parameters.  
+>```
+>round <number> - Equivalent to power of oh.roundTo.
+>ceil <number> - Equivalent to power of oh.roundUpTo.
+>floor <number> - Equivalent to power of oh.roundDownTo.
+>integer_padding <number> - Minimum number of characters before the decimal point. Padding with zeros.
+>decimal_padding <number> - Minimum number of characters after the decimal point. Padding with zeros.
+>padding <number> - Ensures the total length of the output to be at least padding length.
+>trunc <bool, default false> - Truncates the value, returning the integer part only using Math.trunc().
+>grouping <bool, default false> - Groups digits before decimal point in groups of 3.
+>```
+
+Ex: *oh.format(1354.342, { round: 1, grouping: true })* > "1 350".
 
 ## oh.formatDateAsString
 `oh.formatDateAsString(date, output_format, input_format): string`
