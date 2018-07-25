@@ -501,14 +501,14 @@ function setConfig(config_opts: InputConfig) {
     }
     config = Object.assign({}, config, config_opts);
 
+    if (!config.lang) {
+        console.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
+        config.lang = config.fallback_language;
+    }
     if (config.date_locale) {
         moment.locale(config.date_locale);
     } else {
         moment.locale(config.lang);
-    }
-    if (!config.lang) {
-        console.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
-        config.lang = config.fallback_language;
     }
     if (Array.isArray(config.dictionaries) === false) {
         console.error("OH: 'dictionaries' prop required to be an array.");
