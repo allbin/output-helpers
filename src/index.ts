@@ -313,7 +313,6 @@ interface FormatOptions {
     round?: number;
     ceil?: number;
     floor?: number;
-    fixed?: number;
     integer_padding?: number;
     decimal_padding?: number;
     padding?: number;
@@ -330,7 +329,6 @@ function format(value: number, options: FormatOptions) {
     const ceil_exp = options.ceil;
     const floor = (typeof options.floor === "number") || false;
     const floor_exp = options.floor;
-    const fixed = (typeof options.fixed === "number") || false;
     const separate_padding = (typeof options.integer_padding === "number" || typeof options.decimal_padding === "number") || false;
     const i_pad_length = options.integer_padding;
     const d_pad_length = options.decimal_padding;
@@ -356,7 +354,7 @@ function format(value: number, options: FormatOptions) {
         value = roundDownTo(value, floor_exp);
     }
 
-    if (trunc && !round && !fixed) {
+    if (trunc && !round) {
         str = Math.trunc(value).toString();
     } else {
         str = value.toString();
