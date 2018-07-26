@@ -490,7 +490,7 @@ function setConfig(config_opts: InputConfig) {
             return;
         }
         if (config[key] !== default_config[key]) {
-            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
+            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts[key]);
         }
     });
     if (invalid) {
