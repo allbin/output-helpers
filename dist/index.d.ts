@@ -53,7 +53,6 @@ interface FormatOptions {
     round?: number;
     ceil?: number;
     floor?: number;
-    fixed?: number;
     integer_padding?: number;
     decimal_padding?: number;
     padding?: number;

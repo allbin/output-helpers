@@ -267,7 +267,6 @@ function format(value, options) {
     var ceil_exp = options.ceil;
     var floor = typeof options.floor === "number" || false;
     var floor_exp = options.floor;
-    var fixed = typeof options.fixed === "number" || false;
     var separate_padding = typeof options.integer_padding === "number" || typeof options.decimal_padding === "number" || false;
     var i_pad_length = options.integer_padding;
     var d_pad_length = options.decimal_padding;
@@ -289,7 +288,7 @@ function format(value, options) {
     if (floor) {
         value = roundDownTo(value, floor_exp);
     }
-    if (trunc && !round && !fixed) {
+    if (trunc && !round) {
         str = Math.trunc(value).toString();
     } else {
         str = value.toString();
@@ -418,7 +417,7 @@ function setConfig(config_opts) {
             return;
         }
         if (config[key] !== default_config[key]) {
-            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts);
+            console.warn("OH: setConfig has overwritten previous setting '" + key + "': " + config[key] + " => " + config_opts[key]);
         }
     });
     if (invalid) {
@@ -426,14 +425,14 @@ function setConfig(config_opts) {
         return;
     }
     config = Object.assign({}, config, config_opts);
+    if (!config.lang) {
+        console.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
+        config.lang = config.fallback_language;
+    }
     if (config.date_locale) {
         _moment2.default.locale(config.date_locale);
     } else {
         _moment2.default.locale(config.lang);
-    }
-    if (!config.lang) {
-        console.warn("OH: No lang specified with setConfig, defaulting to fallback language: " + config.fallback_language + ".");
-        config.lang = config.fallback_language;
     }
     if (Array.isArray(config.dictionaries) === false) {
         console.error("OH: 'dictionaries' prop required to be an array.");
