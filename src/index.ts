@@ -151,19 +151,19 @@ function capitalizeString(str: string, force_lower:boolean = false) {
 ///////////////
 //DATE and TIME
 
-function formatDateAsString(d: Date|string|Moment, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null) {
+function formatDateAsString(d: Date|string|Moment, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = true) {
     if (moment.isMoment(d)) {
         return d.format(output_format);
     }
 
     if (typeof d === "string") {
         if (input_format) {
-            d = moment(d, input_format);
+            d = (utc) ? moment.utc(d, input_format) : moment(d, input_format);
         } else {
-            d = moment(d);
+            d = (utc) ? moment.utc(d) : moment(d);
         }
     } else if (typeof d.getMonth === 'function') {
-        d = moment(d);
+        d = (utc) ? moment.utc(d) : moment(d);
     } else {
         console.error("Cannot formatDateAsString; unknown format of input. moments, strings and dates are supported. Returning input.");
         return d + ""; //Force string.
@@ -171,11 +171,14 @@ function formatDateAsString(d: Date|string|Moment, output_format = "YYYY-MM-DD H
     return d.format(output_format);
 }
 
-function formatDateAsTimeString(d: Date|string|Moment, input_format = null) {
-    return formatDateAsString(d, "HH:mm", input_format);
+function formatDateAsTimeString(d: Date|string|Moment, input_format = null, utc = true) {
+    return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 
-function dateToMoment(d: Date) {
+function dateToMoment(d: Date, utc = true) {
+    if (utc) {
+        return moment.utc(d);
+    }
     return moment(d);
 }
 
