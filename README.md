@@ -16,11 +16,13 @@ Add additional dictionaries for the *translate* function to use for lookups.
 > See [Dictionary definition](#dictionary-definition).
 
 ## oh.dateToMoment
-`oh.dateToMoment(date): Moment`
+`oh.dateToMoment(date, utc): Moment`
 
 Converts a javascript date to a Moment.
 
 > `date <Date, required>` - The input javascript date to be converted.
+
+> `utc <bool, default true>` - Instruct moment to use utc parsing.
 
 ## oh.format
 `oh.format(value, options): string`
@@ -42,7 +44,7 @@ Converts a javascript date to a Moment.
 Ex: *oh.format(1354.342, { round: 1, grouping: true })* > "1 350".
 
 ## oh.formatDateAsString
-`oh.formatDateAsString(date, output_format, input_format): string`
+`oh.formatDateAsString(date, output_format, input_format, utc): string`
 
 Formats a given date according to output_format. Formats are specified according to Moment standard.
 
@@ -52,14 +54,18 @@ Formats a given date according to output_format. Formats are specified according
 
 > `input_format <string, optional>` - If input date is a string optionally a input format can be specified for Moments parser.
 
+> `utc <bool, default true>` - Instruct moment to use utc parsing.
+
 ## oh.formatDateAsTimeString
-`oh.formatDateAsTimeString(date, input_format): string`
+`oh.formatDateAsTimeString(date, input_format, utc): string`
 
 Formats given date as *HH:mm*. Equivalent to *oh.formatDateAsString(date, "HH:mm")*.
 
 > `date <Date|string|Moment, required>` - Date to be formatted.
 
 > `input_format <string, optional>` - If input date is a string optionally a input format can be specified for Moments parser.
+
+> `utc <bool, default true>` - Instruct moment to use utc parsing.
 
 ## oh.formatSecondsToMS
 `oh.formatSecondsToMS(value, always_include, padding, colon): string`
