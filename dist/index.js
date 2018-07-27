@@ -110,18 +110,19 @@ function capitalizeString(str) {
 function formatDateAsString(d) {
     var output_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "YYYY-MM-DD HH:mm";
     var input_format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var utc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
     if (_moment2.default.isMoment(d)) {
         return d.format(output_format);
     }
     if (typeof d === "string") {
         if (input_format) {
-            d = (0, _moment2.default)(d, input_format);
+            d = utc ? _moment2.default.utc(d, input_format) : (0, _moment2.default)(d, input_format);
         } else {
-            d = (0, _moment2.default)(d);
+            d = utc ? _moment2.default.utc(d) : (0, _moment2.default)(d);
         }
     } else if (typeof d.getMonth === 'function') {
-        d = (0, _moment2.default)(d);
+        d = utc ? _moment2.default.utc(d) : (0, _moment2.default)(d);
     } else {
         console.error("Cannot formatDateAsString; unknown format of input. moments, strings and dates are supported. Returning input.");
         return d + ""; //Force string.
@@ -130,10 +131,16 @@ function formatDateAsString(d) {
 }
 function formatDateAsTimeString(d) {
     var input_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var utc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-    return formatDateAsString(d, "HH:mm", input_format);
+    return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 function dateToMoment(d) {
+    var utc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    if (utc) {
+        return _moment2.default.utc(d);
+    }
     return (0, _moment2.default)(d);
 }
 function getDateLocale() {

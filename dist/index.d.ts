@@ -41,9 +41,9 @@ interface Config {
     lang: LangId;
 }
 declare function translate(str: string, capitalize?: boolean, language?: LangId | null, empty_on_error?: boolean, dictionary?: Dictionary | null): any;
-declare function formatDateAsString(d: Date | string | Moment, output_format?: string, input_format?: string | null): string;
-declare function formatDateAsTimeString(d: Date | string | Moment, input_format?: null): string;
-declare function dateToMoment(d: Date): moment.Moment;
+declare function formatDateAsString(d: Date | string | Moment, output_format?: string, input_format?: string | null, utc?: boolean): string;
+declare function formatDateAsTimeString(d: Date | string | Moment, input_format?: null, utc?: boolean): string;
+declare function dateToMoment(d: Date, utc?: boolean): moment.Moment;
 declare function getDateLocale(language?: LangId | null): moment.LocaleSpecification;
 declare function formatSecondsToMS(value: number, alwaysInclude?: string, padding?: boolean, colon?: boolean): string;
 declare function roundTo(input: number, round_exp?: number): number;
