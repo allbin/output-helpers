@@ -328,7 +328,7 @@ function format(value, options) {
         if (d_pad_length) {
             if (str_arr.length > 1 && str_arr[1].length < d_pad_length) {
                 str_arr[1] = (str_arr[1] + "000000000000000000000").slice(0, d_pad_length);
-                str_arr.join(".");
+                str = str_arr.join(".");
             } else if (str_arr.length > 1) {
                 str = str_arr[0] + "." + (str_arr[1] + "00000000000000000").slice(0, d_pad_length);
             } else {
