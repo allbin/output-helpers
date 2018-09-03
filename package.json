@@ -1,10 +1,10 @@
 {
     "name": "output-helpers",
-    "version": "1.4.1",
+    "version": "1.4.0",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "release": "gulp4 buildAndReleasePatch",
+        "release:patch": "gulp4 buildAndReleasePatch",
         "release:minor": "gulp4 buildAndReleaseMinor",
         "release:major": "gulp4 buildAndReleaseMajor",
         "build": "gulp4 build",
