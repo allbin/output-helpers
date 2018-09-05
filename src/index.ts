@@ -1,4 +1,4 @@
-import moment, { Moment } from 'moment';
+import * as moment from 'moment';
 
 
 
@@ -151,7 +151,7 @@ function capitalizeString(str: string, force_lower:boolean = false) {
 ///////////////
 //DATE and TIME
 
-function formatDateAsString(d: Date|string|Moment, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = true) {
+function formatDateAsString(d: Date|string|moment.Moment, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = true) {
     if (moment.isMoment(d)) {
         return d.format(output_format);
     }
@@ -171,7 +171,7 @@ function formatDateAsString(d: Date|string|Moment, output_format = "YYYY-MM-DD H
     return d.format(output_format);
 }
 
-function formatDateAsTimeString(d: Date|string|Moment, input_format = null, utc = true) {
+function formatDateAsTimeString(d: Date|string|moment.Moment, input_format = null, utc = true) {
     return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 
