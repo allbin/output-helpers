@@ -47,7 +47,7 @@ Ex: *oh.format(1354.342, { round: 1, grouping: true })* > "1 350".
 
 Formats a given date according to output_format. Formats are specified according to Moment standard.
 
-> `date <Date|string|Moment, required>` - The date to be formatted.
+> `date <Date|string|Moment|number, required>` - The date to be formatted.
 
 > `output_format <string, default YYYY-MM-DD HH:mm>` - The output format.
 
@@ -60,7 +60,7 @@ Formats a given date according to output_format. Formats are specified according
 
 Formats given date as *HH:mm*. Equivalent to *oh.formatDateAsString(date, "HH:mm")*.
 
-> `date <Date|string|Moment, required>` - Date to be formatted.
+> `date <Date|string|Moment|number, required>` - Date to be formatted.
 
 > `input_format <string, optional>` - If input date is a string optionally a input format can be specified for Moments parser.
 
