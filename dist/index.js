@@ -121,6 +121,8 @@ function formatDateAsString(d) {
         } else {
             d = utc ? moment.utc(d) : moment(d);
         }
+    } else if (typeof d === "number") {
+        d = utc ? moment.utc(d) : moment(d);
     } else if (typeof d.getMonth === 'function') {
         d = utc ? moment.utc(d) : moment(d);
     } else {

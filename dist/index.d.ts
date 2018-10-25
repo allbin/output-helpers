@@ -41,8 +41,8 @@ interface Config {
     lang: LangId;
 }
 declare function translate(str: string, capitalize?: boolean, language?: LangId | null, empty_on_error?: boolean, dictionary?: Dictionary | null): any;
-declare function formatDateAsString(d: Date | string | moment.Moment, output_format?: string, input_format?: string | null, utc?: boolean): string;
-declare function formatDateAsTimeString(d: Date | string | moment.Moment, input_format?: null, utc?: boolean): string;
+declare function formatDateAsString(d: Date | string | moment.Moment | number, output_format?: string, input_format?: string | null, utc?: boolean): string;
+declare function formatDateAsTimeString(d: Date | string | moment.Moment | number, input_format?: null, utc?: boolean): string;
 declare function dateToMoment(d: Date, utc?: boolean): moment.Moment;
 declare function getDateLocale(language?: LangId | null): moment.LocaleSpecification;
 declare function formatSecondsToMS(value: number, alwaysInclude?: string, padding?: boolean, colon?: boolean): string;
