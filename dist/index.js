@@ -8,13 +8,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _moment = require('moment');
 
-var moment = _interopRequireWildcard(_moment);
+var _moment2 = _interopRequireDefault(_moment);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-moment.defineLocale('sv-SE', getDateLocale('sv-SE'));
-moment.defineLocale('en-US', getDateLocale('en-US'));
-moment.locale('en-US');
+_moment2.default.defineLocale('sv-SE', getDateLocale('sv-SE'));
+_moment2.default.defineLocale('en-US', getDateLocale('en-US'));
+_moment2.default.locale('en-US');
 var translations = {};
 var default_config = {
     date_locale: null,
@@ -112,19 +112,19 @@ function formatDateAsString(d) {
     var input_format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     var utc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-    if (moment.isMoment(d)) {
+    if (_moment2.default.isMoment(d)) {
         return d.format(output_format);
     }
     if (typeof d === "string") {
         if (input_format) {
-            d = utc ? moment.utc(d, input_format) : moment(d, input_format);
+            d = utc ? _moment2.default.utc(d, input_format) : (0, _moment2.default)(d, input_format);
         } else {
-            d = utc ? moment.utc(d) : moment(d);
+            d = utc ? _moment2.default.utc(d) : (0, _moment2.default)(d);
         }
     } else if (typeof d === "number") {
-        d = utc ? moment.utc(d) : moment(d);
+        d = utc ? _moment2.default.utc(d) : (0, _moment2.default)(d);
     } else if (typeof d.getMonth === 'function') {
-        d = utc ? moment.utc(d) : moment(d);
+        d = utc ? _moment2.default.utc(d) : (0, _moment2.default)(d);
     } else {
         console.error("Cannot formatDateAsString; unknown format of input. moments, strings and dates are supported. Returning input.");
         return d + ""; //Force string.
@@ -141,9 +141,9 @@ function dateToMoment(d) {
     var utc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     if (utc) {
-        return moment.utc(d);
+        return _moment2.default.utc(d);
     }
-    return moment(d);
+    return (0, _moment2.default)(d);
 }
 function getDateLocale() {
     var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -439,9 +439,9 @@ function setConfig(config_opts) {
         config.lang = config.fallback_language;
     }
     if (config.date_locale) {
-        moment.locale(config.date_locale);
+        _moment2.default.locale(config.date_locale);
     } else {
-        moment.locale(config.lang);
+        _moment2.default.locale(config.lang);
     }
     if (Array.isArray(config.dictionaries) === false) {
         console.error("OH: 'dictionaries' prop required to be an array.");

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 interface StrStrObject {
     [key: string]: string;
 }
