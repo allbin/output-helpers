@@ -110,7 +110,7 @@ function capitalizeString(str) {
 function formatDateAsString(d) {
     var output_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "YYYY-MM-DD HH:mm";
     var input_format = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-    var utc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    var utc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
     if (moment.isMoment(d)) {
         return d.format(output_format);
@@ -133,12 +133,12 @@ function formatDateAsString(d) {
 }
 function formatDateAsTimeString(d) {
     var input_format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var utc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    var utc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
     return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 function dateToMoment(d) {
-    var utc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var utc = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
     if (utc) {
         return moment.utc(d);
