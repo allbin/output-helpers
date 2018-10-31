@@ -53,7 +53,7 @@ Formats a given date according to output_format. Formats are specified according
 
 > `input_format <string, optional>` - If input date is a string optionally a input format can be specified for Moments parser.
 
-> `utc <bool, default true>` - Instruct moment to use utc parsing.
+> `utc <bool, default false>` - Instruct moment to use utc parsing.
 
 ## oh.formatDateAsTimeString
 `oh.formatDateAsTimeString(date, input_format, utc): string`

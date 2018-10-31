@@ -151,7 +151,7 @@ function capitalizeString(str: string, force_lower:boolean = false) {
 ///////////////
 //DATE and TIME
 
-function formatDateAsString(d: Date|string|moment.Moment|number, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = true) {
+function formatDateAsString(d: Date|string|moment.Moment|number, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = false) {
     if (moment.isMoment(d)) {
         return d.format(output_format);
     }
@@ -173,11 +173,11 @@ function formatDateAsString(d: Date|string|moment.Moment|number, output_format =
     return d.format(output_format);
 }
 
-function formatDateAsTimeString(d: Date|string|moment.Moment|number, input_format = null, utc = true) {
+function formatDateAsTimeString(d: Date|string|moment.Moment|number, input_format = null, utc = false) {
     return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 
-function dateToMoment(d: Date, utc = true) {
+function dateToMoment(d: Date, utc = false) {
     if (utc) {
         return moment.utc(d);
     }
