@@ -1,38 +1,24 @@
 import moment from 'moment';
 
 
-
-interface StrStrObject {
-    [key: string]: string;
-}
-type LangId = "sv-SE"|"en-US";
-interface Dictionary {
+export type LangId = "sv-SE"|"en-US";
+export interface Dictionary {
     [key: string]: any;
     "sv-SE"?: StrStrObject;
     "en-US"?: StrStrObject;
     prefix?: string;
 }
-interface FormatOptions {
+export interface FormatOptions {
     round?: number;
     ceil?: number;
     floor?: number;
-    fixed?: number;
     integer_padding?: number;
     decimal_padding?: number;
     padding?: number;
     trunc?: boolean;
     grouping?: boolean;
 }
-interface InputConfig {
-    [key: string]: any;
-    date_locale?: LangId;
-    dictionaries?: Dictionary[];
-    extend_with?: {
-        [key: string]: any
-    };
-    fallback_language?: LangId;
-    lang?: LangId;
-}
+export interface OHConfig extends Partial<Config> {}
 interface Config {
     [key: string]: any;
     date_locale: LangId|null;
@@ -43,7 +29,9 @@ interface Config {
     fallback_language: LangId;
     lang: LangId;
 }
-
+interface StrStrObject {
+    [key: string]: string;
+}
 
 
 
@@ -314,16 +302,6 @@ function roundDownTo(input: number, floor_exp: number = 0) {
     return +(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] + floor_exp) : floor_exp));
 }
 
-interface FormatOptions {
-    round?: number;
-    ceil?: number;
-    floor?: number;
-    integer_padding?: number;
-    decimal_padding?: number;
-    padding?: number;
-    trunc?: boolean;
-    grouping?: boolean;
-}
 
 function format(value: number, options: FormatOptions) {
     let str: string;
@@ -486,7 +464,7 @@ let funcs = {
 
 let exported_funcs = Object.assign({}, funcs);
 
-function setConfig(config_opts: InputConfig) {
+function setConfig(config_opts: OHConfig) {
     let invalid = false;
     Object.keys(config_opts).forEach((key) => {
         if (key === "dictionaries" && config.dictionaries.length > 0) {
