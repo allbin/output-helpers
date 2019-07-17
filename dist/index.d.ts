@@ -1,34 +1,22 @@
 import moment from 'moment';
-interface StrStrObject {
-    [key: string]: string;
-}
-declare type LangId = "sv-SE" | "en-US";
-interface Dictionary {
+export declare type LangId = "sv-SE" | "en-US";
+export interface Dictionary {
     [key: string]: any;
     "sv-SE"?: StrStrObject;
     "en-US"?: StrStrObject;
     prefix?: string;
 }
-interface FormatOptions {
+export interface FormatOptions {
     round?: number;
     ceil?: number;
     floor?: number;
-    fixed?: number;
     integer_padding?: number;
     decimal_padding?: number;
     padding?: number;
     trunc?: boolean;
     grouping?: boolean;
 }
-interface InputConfig {
-    [key: string]: any;
-    date_locale?: LangId;
-    dictionaries?: Dictionary[];
-    extend_with?: {
-        [key: string]: any;
-    };
-    fallback_language?: LangId;
-    lang?: LangId;
+export interface OHConfig extends Partial<Config> {
 }
 interface Config {
     [key: string]: any;
@@ -40,6 +28,9 @@ interface Config {
     fallback_language: LangId;
     lang: LangId;
 }
+interface StrStrObject {
+    [key: string]: string;
+}
 declare function translate(str: string, capitalize?: boolean, language?: LangId | null, empty_on_error?: boolean, dictionary?: Dictionary | null): any;
 declare function formatDateAsString(d: Date | string | moment.Moment | number, output_format?: string, input_format?: string | null, utc?: boolean): string;
 declare function formatDateAsTimeString(d: Date | string | moment.Moment | number, input_format?: null, utc?: boolean): string;
@@ -49,16 +40,6 @@ declare function formatSecondsToMS(value: number, alwaysInclude?: string, paddin
 declare function roundTo(input: number, round_exp?: number): number;
 declare function roundUpTo(input: number, ceil_exp?: number): number;
 declare function roundDownTo(input: number, floor_exp?: number): number;
-interface FormatOptions {
-    round?: number;
-    ceil?: number;
-    floor?: number;
-    integer_padding?: number;
-    decimal_padding?: number;
-    padding?: number;
-    trunc?: boolean;
-    grouping?: boolean;
-}
 declare function format(value: number, options: FormatOptions): string;
 declare function addDictionary(dictionary: Dictionary): void;
 declare let exported_funcs: {
@@ -78,7 +59,7 @@ declare let exported_funcs: {
     setConfig: typeof setConfig;
     translate: typeof translate;
 };
-declare function setConfig(config_opts: InputConfig): void;
+declare function setConfig(config_opts: OHConfig): void;
 declare function getCurrentConfig(): Config;
 declare function getLang(): LangId;
 declare function getFallbackLang(): LangId;
