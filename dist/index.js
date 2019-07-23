@@ -323,6 +323,10 @@ function format(value, options) {
         }
     }
     if (separate_padding) {
+        if (is_negative) {
+            //Remove minus sign if negative.
+            str = str.substr(1);
+        }
         str_arr = str.split(".");
         if (i_pad_length && str_arr[0].length < i_pad_length) {
             str_arr[0] = ("000000000000000000000" + str_arr[0]).slice(-i_pad_length);
@@ -337,10 +341,22 @@ function format(value, options) {
                 str = str_arr[0] + "." + "00000000000000000".slice(0, d_pad_length);
             }
         }
+        if (is_negative) {
+            //Add minus sign if negative.
+            str = "-" + str;
+        }
     }
     if (padding && pad_length) {
+        if (is_negative) {
+            //Remove minus sign if negative.
+            str = str.substr(1);
+        }
         if (str.length < pad_length) {
             str = (str + "000000000000000000000").slice(0, pad_length);
+        }
+        if (is_negative) {
+            //Add minus sign if negative.
+            str = "-" + str;
         }
     }
     return str;
