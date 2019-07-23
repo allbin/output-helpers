@@ -302,26 +302,6 @@ function format(value, options) {
     } else {
         str = value.toString();
     }
-    if (grouping) {
-        if (is_negative) {
-            //Remove minus sign if negative.
-            str = str.substr(1);
-        }
-        var separated = str.split('.'); //We only want to group the value before the decimal point.
-        str_arr = separated[0].split('');
-        str = "";
-        while (str_arr.length > 3) {
-            str = " " + str_arr[str_arr.length - 3] + str_arr[str_arr.length - 2] + str_arr[str_arr.length - 1] + str;
-            str_arr = str_arr.slice(0, str_arr.length - 3);
-        }
-        var joined_arr = str_arr.join("");
-        str = joined_arr.length > 0 ? joined_arr + str : str;
-        str += separated.length > 1 ? "." + separated[1] : "";
-        if (is_negative) {
-            //Add minus sign if negative.
-            str = "-" + str;
-        }
-    }
     if (separate_padding) {
         if (is_negative) {
             //Remove minus sign if negative.
@@ -354,6 +334,28 @@ function format(value, options) {
         if (str.length < pad_length) {
             str = (str + "000000000000000000000").slice(0, pad_length);
         }
+        if (is_negative) {
+            //Add minus sign if negative.
+            str = "-" + str;
+        }
+    }
+    if (grouping) {
+        if (is_negative) {
+            //Remove minus sign if negative.
+            str = str.substr(1);
+        }
+        var separated = str.split('.'); //We only want to group the value before the decimal point.
+        str_arr = separated[0].split('');
+        str = "";
+        if (str_arr[0] !== '0') {
+            while (str_arr.length > 3) {
+                str = " " + str_arr[str_arr.length - 3] + str_arr[str_arr.length - 2] + str_arr[str_arr.length - 1] + str;
+                str_arr = str_arr.slice(0, str_arr.length - 3);
+            }
+        }
+        var joined_arr = str_arr.join("");
+        str = joined_arr.length > 0 ? joined_arr + str : str;
+        str += separated.length > 1 ? "." + separated[1] : "";
         if (is_negative) {
             //Add minus sign if negative.
             str = "-" + str;
