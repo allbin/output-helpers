@@ -6,6 +6,11 @@ export interface Dictionary {
     "en-US"?: StrStrObject;
     prefix?: string;
 }
+export interface TypedDictionary<T> {
+    "sv-SE"?: T;
+    "en-US"?: T;
+    prefix?: string;
+}
 export interface FormatOptions {
     round?: number;
     ceil?: number;

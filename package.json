@@ -1,6 +1,6 @@
 {
     "name": "output-helpers",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "description": "",
     "main": "dist/module/index.js",
     "scripts": {
