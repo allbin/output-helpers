@@ -1,31 +1,97 @@
 let gulp = require('gulp4');
-let allbin = require('gulp-allbin');
-
 let sourcemaps = require('gulp-sourcemaps');
 let ts = require('gulp-typescript');
-let babel = require('gulp-babel');
-let tsProject = ts.createProject('./tsconfig.json');
+let tsProject = ts.createProject('./tsconfig.prod.json');
+let exec = require('child_process').exec;
+let fs = require('fs');
+let bump = require('gulp-bump');
+let del = require('del');
 
+let execPromise = (cmd) => {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (err, stdout, stderr) => {
+            if (err) {
+                return reject(new Error(cmd + ": " + stderr));
+            }
+            return resolve();
+        });
+    });
+};
 
-// gulp.task('release', allbin.buildBumpPatchPush());
-// gulp.task('release:minor', allbin.buildBumpMinorPush());
-// gulp.task('release:major', allbin.buildBumpMajorPush());
+function addFilesCommitTagPush(cb, files = null) {
+    if (!files || !Array.isArray(files)) {
+        return Promise.reject("Files property is required to be an array of files to 'git add'.");
+    }
 
-gulp.task('build', function () {
-    return gulp.src(['src/**/*.ts', 'src/**/*.js'])
+    let version = "";
+
+    return Promise.resolve().then(() => {
+        version = JSON.parse(fs.readFileSync('package.json')).version;
+    }).then(() => {
+        return execPromise('git add ' + files.join(' '));
+    }).then(() => {
+        console.log("Added files '" + files.join(' ') + "' to git.");
+        return execPromise('git commit -m "Release v' + version + '"');
+    }).then(() => {
+        return execPromise('git tag v' + version);
+    }).then(() => {
+        console.log("Commit and tagged 'v" + version + "'.");
+        return execPromise('git push && git push --tags');
+    }).then(() => {
+        console.log("Pushed.");
+        cb();
+    }).catch((err) => {
+        cb(err);
+    });
+}
+
+function tagAndPush(files = ["package.json"], bump = "patch") {
+    if (bump === "major") {
+        return gulp.series('bump:major', (cb) => { addFilesCommitTagPush(cb, files); });
+    } else if (bump === "minor") {
+        return gulp.series('bump:minor', (cb) => { addFilesCommitTagPush(cb, files); });
+    }
+    return gulp.series('bump:patch', (cb) => { addFilesCommitTagPush(cb, files); });
+}
+
+gulp.task('clean', () => {
+    return del("dist");
+});
+
+gulp.task('build:static', () => {
+    return gulp.src(['./src/module/img/**/*']).pipe(gulp.dest('dist/module/img'));
+});
+
+gulp.task('build:compile', function () {
+    return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
-        .pipe(babel({
-            presets: ['env']
-        }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('release:patch', allbin.tagAndPush(["package.json", "dist"], "patch"));
-gulp.task('release:minor', allbin.tagAndPush(["package.json", "dist"], "minor"));
-gulp.task('release:major', allbin.tagAndPush(["package.json", "dist"], "major"));
+gulp.task('build', gulp.parallel('build:static', 'build:compile'));
 
-gulp.task('buildAndReleasePatch', gulp.series('build', 'release:patch'));
-gulp.task('buildAndReleaseMinor', gulp.series('build', 'release:minor'));
-gulp.task('buildAndReleaseMajor', gulp.series('build', 'release:major'));
+gulp.task('bump:patch', (cb) => {
+    return gulp.src('./package.json')
+        .pipe(bump())
+        .pipe(gulp.dest('.'));
+});
+gulp.task('bump:minor', (cb) => {
+    return gulp.src('./package.json')
+        .pipe(bump({ type: 'minor' }))
+        .pipe(gulp.dest('.'));
+});
+gulp.task('bump:major', (cb) => {
+    return gulp.src('./package.json')
+        .pipe(bump({ type: 'major' }))
+        .pipe(gulp.dest('.'));
+});
+
+gulp.task('release:patch', tagAndPush(["package.json", "dist"], "patch"));
+gulp.task('release:minor', tagAndPush(["package.json", "dist"], "minor"));
+gulp.task('release:major', tagAndPush(["package.json", "dist"], "major"));
+
+gulp.task('buildAndReleasePatch', gulp.series('clean', 'build', 'release:patch'));
+gulp.task('buildAndReleaseMinor', gulp.series('clean', 'build', 'release:minor'));
+gulp.task('buildAndReleaseMajor', gulp.series('clean', 'build', 'release:major'));

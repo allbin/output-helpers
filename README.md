@@ -164,6 +164,11 @@ Will use the configured language and dictionaries unless specified.
 
 >`dictionary <object, default to configured and added dictionaries>` - **See the `oh.addDictionary()` docs.**
 
+## oh.translateTyped
+`oh.translateTyped<T>(key, capitalize, language, empty_on_error, dictionary): string`
+
+Equivalent to `oh.translate` but takes in a Type T with which to match the key, eg: `key keyof T`. If the key is not present in T it will not allow compilation.
+
 # Dictionary definition
 A dictionary an object with a key for each language supported by the dictionary. Each language should be an object with signature *key: string, value: string*.
 

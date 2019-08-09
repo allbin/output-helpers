@@ -56,6 +56,22 @@ let supported_languages = ['sv-SE', 'en-US'];
 //////////////////
 //STRINGS
 
+function translateTyped<T>(key: keyof T, capitalize: boolean = true, language: LangId | null = null, empty_on_error: boolean = false, dictionary: Dictionary | null = null) {
+    let lang = language || config.lang;
+    dictionary = dictionary || translations;
+
+    if (!dictionary) {
+        console.error("Dictionary not defined.");
+        return key;
+    }
+
+    let translation = doTranslationCheck(key as string, dictionary, lang, empty_on_error);
+
+    if (capitalize === true) {
+        return capitalizeString(translation);
+    }
+    return translation;
+}
 function translate(str: string, capitalize: boolean = true, language: LangId|null = null, empty_on_error: boolean = false, dictionary: Dictionary|null = null) {
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : config.fallback_language;
     let lang = language || config.lang;
@@ -460,6 +476,7 @@ let funcs = {
     roundUpTo: roundUpTo,
     setConfig: setConfig,
     translate: translate,
+    translateTyped: translateTyped
 };
 
 let exported_funcs = Object.assign({}, funcs);
