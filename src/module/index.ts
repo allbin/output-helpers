@@ -1,11 +1,16 @@
 import moment from 'moment';
 
 
-export type LangId = "sv-SE"|"en-US";
+export type LangId = "sv-SE" | "en-US";
 export interface Dictionary {
     [key: string]: any;
     "sv-SE"?: StrStrObject;
     "en-US"?: StrStrObject;
+    prefix?: string;
+}
+export interface TypedDictionary<T> {
+    "sv-SE"?: T;
+    "en-US"?: T;
     prefix?: string;
 }
 export interface FormatOptions {
@@ -18,14 +23,14 @@ export interface FormatOptions {
     trunc?: boolean;
     grouping?: boolean;
 }
-export interface OHConfig extends Partial<Config> {}
+export interface OHConfig extends Partial<Config> { }
 interface Config {
     [key: string]: any;
-    date_locale: LangId|null;
+    date_locale: LangId | null;
     dictionaries: Dictionary[];
     extend_with: {
         [key: string]: any
-    }|null;
+    } | null;
     fallback_language: LangId;
     lang: LangId;
 }
@@ -72,7 +77,7 @@ function translateTyped<T>(key: keyof T, capitalize: boolean = true, language: L
     }
     return translation;
 }
-function translate(str: string, capitalize: boolean = true, language: LangId|null = null, empty_on_error: boolean = false, dictionary: Dictionary|null = null) {
+function translate(str: string, capitalize: boolean = true, language: LangId | null = null, empty_on_error: boolean = false, dictionary: Dictionary | null = null) {
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : config.fallback_language;
     let lang = language || config.lang;
     dictionary = dictionary || translations;
@@ -97,7 +102,7 @@ function translate(str: string, capitalize: boolean = true, language: LangId|nul
 
 function doTranslationCheck(key: string, dictionary: Dictionary, lang: string, empty_on_error: boolean = false) {
     if (dictionary.hasOwnProperty(lang) === false) {
-        console.warn("Translation for language '" + lang +"' not supported, defaulting to: " + config.fallback_language);
+        console.warn("Translation for language '" + lang + "' not supported, defaulting to: " + config.fallback_language);
         if (dictionary.hasOwnProperty(config.fallback_language) === false) {
             console.error("Fallback language '" + config.fallback_language + "' not defined in translation library!");
             if (empty_on_error) {
@@ -123,7 +128,7 @@ function doTranslationCheck(key: string, dictionary: Dictionary, lang: string, e
         } else {
             translation = undefined;
         }
-        
+
         if (!translation) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
             if (empty_on_error) {
@@ -138,7 +143,7 @@ function doTranslationCheck(key: string, dictionary: Dictionary, lang: string, e
     return translation;
 }
 
-function capitalizeString(str: string, force_lower:boolean = false) {
+function capitalizeString(str: string, force_lower: boolean = false) {
     if (typeof str !== "string") { console.warn("Capitalize err: input not a string."); return ""; }
     if (str.length < 1) { return ""; }
 
@@ -155,7 +160,7 @@ function capitalizeString(str: string, force_lower:boolean = false) {
 ///////////////
 //DATE and TIME
 
-function formatDateAsString(d: Date|string|moment.Moment|number, output_format = "YYYY-MM-DD HH:mm", input_format: string|null = null, utc = false) {
+function formatDateAsString(d: Date | string | moment.Moment | number, output_format = "YYYY-MM-DD HH:mm", input_format: string | null = null, utc = false) {
     if (moment.isMoment(d)) {
         return d.format(output_format);
     }
@@ -177,7 +182,7 @@ function formatDateAsString(d: Date|string|moment.Moment|number, output_format =
     return d.format(output_format);
 }
 
-function formatDateAsTimeString(d: Date|string|moment.Moment|number, input_format = null, utc = false) {
+function formatDateAsTimeString(d: Date | string | moment.Moment | number, input_format = null, utc = false) {
     return formatDateAsString(d, "HH:mm", input_format, utc);
 }
 
@@ -188,7 +193,7 @@ function dateToMoment(d: Date, utc = false) {
     return moment(d);
 }
 
-function getDateLocale(language: LangId|null = null) {
+function getDateLocale(language: LangId | null = null) {
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : fallback_language;
     let lang = language || config.lang;
 
@@ -430,8 +435,8 @@ function updateTranslations(dictionary_arr: Dictionary[], warn = true, overwrite
             } else {
                 if (warn || !overwrite) {
                     let updated_lang_translations = Object.assign({}, translations[lang]);
-                    
-                    keys_for_lang.forEach((translation_key) => { 
+
+                    keys_for_lang.forEach((translation_key) => {
                         if (updated_lang_translations.hasOwnProperty(prefix + translation_key)) {
                             if (warn) {
                                 console.warn("OH: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
