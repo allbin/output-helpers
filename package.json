@@ -1,5 +1,5 @@
 {
-    "name": "output-helpers",
+    "name": "@allbin/output-helpers",
     "version": "2.2.1",
     "description": "",
     "main": "dist/module/index.js",
@@ -47,5 +47,12 @@
     },
     "peerDependencies": {
         "moment": "2.x"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:allbin/output-helpers.git"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
     }
 }
