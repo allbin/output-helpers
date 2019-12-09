@@ -1,4 +1,4 @@
-name: Build and publish NPM package
+name: Build and Publish
 
 on: [push]
 
@@ -7,22 +7,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x, 12.x]
-
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 10.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 10.x
         registry-url: https://npm.pkg.github.com/
         scope: "@allbin"
     - name: npm install, build, and test
       run: |
         yarn install --frozen-lockfile
         yarn build
-        yarn publish --access restricted
       env:
         CI: true
+    - name: publish
+      run: |
+        echo "registry=https://npm.pkg.github.com/allbin" > .npmrc
+        echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+        yarn publish
