@@ -1,35 +1,45 @@
-import moment from 'moment';
-moment.defineLocale('sv-SE', getDateLocale('sv-SE'));
-moment.defineLocale('en-US', getDateLocale('en-US'));
-moment.locale('en-US');
-let translations = {};
-let default_config = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var moment_1 = require("moment");
+moment_1.default.defineLocale('sv-SE', getDateLocale('sv-SE'));
+moment_1.default.defineLocale('en-US', getDateLocale('en-US'));
+moment_1.default.locale('en-US');
+var translations = {};
+var default_config = {
     date_locale: null,
     dictionaries: [],
     extend_with: null,
     fallback_language: 'en-US',
     lang: 'en-US'
 };
-let config = Object.assign({}, default_config);
-let supported_languages = ['sv-SE', 'en-US'];
+var config = Object.assign({}, default_config);
+var supported_languages = ['sv-SE', 'en-US'];
 //////////////////
 //STRINGS
-function translateTyped(key, capitalize = true, language = null, empty_on_error = false, dictionary = null) {
-    let lang = language || config.lang;
+function translateTyped(key, capitalize, language, empty_on_error, dictionary) {
+    if (capitalize === void 0) { capitalize = true; }
+    if (language === void 0) { language = null; }
+    if (empty_on_error === void 0) { empty_on_error = false; }
+    if (dictionary === void 0) { dictionary = null; }
+    var lang = language || config.lang;
     dictionary = dictionary || translations;
     if (!dictionary) {
         console.error("Dictionary not defined.");
         return key;
     }
-    let translation = doTranslationCheck(key, dictionary, lang, empty_on_error);
+    var translation = doTranslationCheck(key, dictionary, lang, empty_on_error);
     if (capitalize === true) {
         return capitalizeString(translation);
     }
     return translation;
 }
-function translate(str, capitalize = true, language = null, empty_on_error = false, dictionary = null) {
+function translate(str, capitalize, language, empty_on_error, dictionary) {
+    if (capitalize === void 0) { capitalize = true; }
+    if (language === void 0) { language = null; }
+    if (empty_on_error === void 0) { empty_on_error = false; }
+    if (dictionary === void 0) { dictionary = null; }
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : config.fallback_language;
-    let lang = language || config.lang;
+    var lang = language || config.lang;
     dictionary = dictionary || translations;
     if (!dictionary) {
         console.error("Dictionary not defined.");
@@ -39,13 +49,14 @@ function translate(str, capitalize = true, language = null, empty_on_error = fal
         console.error("Tried to translate undefined string.");
         return "";
     }
-    let translation = doTranslationCheck(str, dictionary, lang, empty_on_error);
+    var translation = doTranslationCheck(str, dictionary, lang, empty_on_error);
     if (capitalize === true) {
         return capitalizeString(translation);
     }
     return translation;
 }
-function doTranslationCheck(key, dictionary, lang, empty_on_error = false) {
+function doTranslationCheck(key, dictionary, lang, empty_on_error) {
+    if (empty_on_error === void 0) { empty_on_error = false; }
     if (dictionary.hasOwnProperty(lang) === false) {
         console.warn("Translation for language '" + lang + "' not supported, defaulting to: " + config.fallback_language);
         if (dictionary.hasOwnProperty(config.fallback_language) === false) {
@@ -57,7 +68,7 @@ function doTranslationCheck(key, dictionary, lang, empty_on_error = false) {
         }
         lang = config.fallback_language;
     }
-    let translation = dictionary[lang][key];
+    var translation = dictionary[lang][key];
     if (!translation) {
         if (lang === config.fallback_language) {
             console.error("No translation found for '" + key + "' for '" + lang + "' or fallback language.");
@@ -66,7 +77,7 @@ function doTranslationCheck(key, dictionary, lang, empty_on_error = false) {
             }
             return key + "";
         }
-        const dict = dictionary[config.fallback_language];
+        var dict = dictionary[config.fallback_language];
         if (dict) {
             translation = dict[key];
         }
@@ -84,7 +95,8 @@ function doTranslationCheck(key, dictionary, lang, empty_on_error = false) {
     }
     return translation;
 }
-function capitalizeString(str, force_lower = false) {
+function capitalizeString(str, force_lower) {
+    if (force_lower === void 0) { force_lower = false; }
     if (typeof str !== "string") {
         console.warn("Capitalize err: input not a string.");
         return "";
@@ -99,23 +111,26 @@ function capitalizeString(str, force_lower = false) {
 }
 ///////////////
 //DATE and TIME
-function formatDateAsString(d, output_format = "YYYY-MM-DD HH:mm", input_format = null, utc = false) {
-    if (moment.isMoment(d)) {
+function formatDateAsString(d, output_format, input_format, utc) {
+    if (output_format === void 0) { output_format = "YYYY-MM-DD HH:mm"; }
+    if (input_format === void 0) { input_format = null; }
+    if (utc === void 0) { utc = false; }
+    if (moment_1.default.isMoment(d)) {
         return d.format(output_format);
     }
     if (typeof d === "string") {
         if (input_format) {
-            d = (utc) ? moment.utc(d, input_format) : moment(d, input_format);
+            d = (utc) ? moment_1.default.utc(d, input_format) : moment_1.default(d, input_format);
         }
         else {
-            d = (utc) ? moment.utc(d) : moment(d);
+            d = (utc) ? moment_1.default.utc(d) : moment_1.default(d);
         }
     }
     else if (typeof d === "number") {
-        d = (utc) ? moment.utc(d) : moment(d);
+        d = (utc) ? moment_1.default.utc(d) : moment_1.default(d);
     }
     else if (typeof d.getMonth === 'function') {
-        d = (utc) ? moment.utc(d) : moment(d);
+        d = (utc) ? moment_1.default.utc(d) : moment_1.default(d);
     }
     else {
         console.error("Cannot formatDateAsString; unknown format of input. moments, strings and dates are supported. Returning input.");
@@ -123,19 +138,23 @@ function formatDateAsString(d, output_format = "YYYY-MM-DD HH:mm", input_format 
     }
     return d.format(output_format);
 }
-function formatDateAsTimeString(d, input_format = null, utc = false) {
+function formatDateAsTimeString(d, input_format, utc) {
+    if (input_format === void 0) { input_format = null; }
+    if (utc === void 0) { utc = false; }
     return formatDateAsString(d, "HH:mm", input_format, utc);
 }
-function dateToMoment(d, utc = false) {
+function dateToMoment(d, utc) {
+    if (utc === void 0) { utc = false; }
     if (utc) {
-        return moment.utc(d);
+        return moment_1.default.utc(d);
     }
-    return moment(d);
+    return moment_1.default(d);
 }
-function getDateLocale(language = null) {
+function getDateLocale(language) {
+    if (language === void 0) { language = null; }
     // const lang_in_jwt = (window.sso && window.sso.isLoggedIn()) ? window.sso.getJWT().getClaim("lang") : fallback_language;
-    let lang = language || config.lang;
-    const date_locales = {
+    var lang = language || config.lang;
+    var date_locales = {
         "sv-SE": {
             months: [
                 "Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli",
@@ -174,7 +193,7 @@ function getDateLocale(language = null) {
     }
     throw new Error("Missing date locales for lang '" + lang + "' and fallback language '" + config.fallback_language + "'. Returning null.");
 }
-function formatSecondsToMS(value, alwaysInclude = "none", padding = false, colon = false) {
+function formatSecondsToMS(value, alwaysInclude, padding, colon) {
     //Function to convert a value (seconds) to a [m]m[s]s format: 1m2s.
     //alwaysInclude can be:
     // "none" - if not enough for a minute only returns seconds, if an exact minute the seconds will not be included.
@@ -183,10 +202,13 @@ function formatSecondsToMS(value, alwaysInclude = "none", padding = false, colon
     // "both" - Will always prepend and append "0m" and "0s" respectively as needed.
     //padding <bool> toggles if values should be padded so 4 becomes 04. Both minutes and seconds will be padded.
     //colon <bool> changes the format to be mm:ss instead of "mmMssS". Will always include both minutes and seconds, always padding.
-    const minutes = (value > 0) ? Math.floor(value / 60) : Math.ceil(value / 60);
-    const seconds = value % 60;
-    let m_str = "";
-    let s_str = "";
+    if (alwaysInclude === void 0) { alwaysInclude = "none"; }
+    if (padding === void 0) { padding = false; }
+    if (colon === void 0) { colon = false; }
+    var minutes = (value > 0) ? Math.floor(value / 60) : Math.ceil(value / 60);
+    var seconds = value % 60;
+    var m_str = "";
+    var s_str = "";
     if (padding || colon) {
         m_str = format(minutes, { padding: 2 });
         s_str = format(seconds, { padding: 2 });
@@ -223,53 +245,56 @@ function formatSecondsToMS(value, alwaysInclude = "none", padding = false, colon
 }
 ////////////////
 //Numeric
-function roundTo(input, round_exp = 0) {
+function roundTo(input, round_exp) {
+    if (round_exp === void 0) { round_exp = 0; }
     if (round_exp === 0) {
         return Math.round(input);
     }
-    let stringified = [""];
+    var stringified = [""];
     stringified = input.toString().split('e');
-    let round = Math.round(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - round_exp) : -round_exp)));
+    var round = Math.round(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - round_exp) : -round_exp)));
     stringified = round.toString().split('e');
     return +(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] + round_exp) : round_exp));
 }
-function roundUpTo(input, ceil_exp = 0) {
+function roundUpTo(input, ceil_exp) {
+    if (ceil_exp === void 0) { ceil_exp = 0; }
     if (ceil_exp === 0) {
         return Math.ceil(input);
     }
-    let stringified = [""];
+    var stringified = [""];
     stringified = input.toString().split('e');
-    let ceil = Math.ceil(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - ceil_exp) : -ceil_exp)));
+    var ceil = Math.ceil(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - ceil_exp) : -ceil_exp)));
     stringified = ceil.toString().split('e');
     return +(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] + ceil_exp) : ceil_exp));
 }
-function roundDownTo(input, floor_exp = 0) {
+function roundDownTo(input, floor_exp) {
+    if (floor_exp === void 0) { floor_exp = 0; }
     if (floor_exp === 0) {
         return Math.floor(input);
     }
-    let stringified = [""];
+    var stringified = [""];
     stringified = input.toString().split('e');
-    let floor = Math.floor(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - floor_exp) : -floor_exp)));
+    var floor = Math.floor(+(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] - floor_exp) : -floor_exp)));
     stringified = floor.toString().split('e');
     return +(stringified[0] + 'e' + (stringified[1] ? (+stringified[1] + floor_exp) : floor_exp));
 }
 function format(value, options) {
-    let str;
-    let str_arr;
-    const round = (typeof options.round === "number") || false;
-    const round_exp = options.round;
-    const ceil = (typeof options.ceil === "number") || false;
-    const ceil_exp = options.ceil;
-    const floor = (typeof options.floor === "number") || false;
-    const floor_exp = options.floor;
-    const separate_padding = (typeof options.integer_padding === "number" || typeof options.decimal_padding === "number") || false;
-    const i_pad_length = options.integer_padding;
-    const d_pad_length = options.decimal_padding;
-    const padding = (typeof options.padding === "number") || false;
-    const pad_length = options.padding;
-    const trunc = (options.trunc === true) || false;
-    const grouping = (options.grouping === true) || false;
-    const is_negative = (value < 0);
+    var str;
+    var str_arr;
+    var round = (typeof options.round === "number") || false;
+    var round_exp = options.round;
+    var ceil = (typeof options.ceil === "number") || false;
+    var ceil_exp = options.ceil;
+    var floor = (typeof options.floor === "number") || false;
+    var floor_exp = options.floor;
+    var separate_padding = (typeof options.integer_padding === "number" || typeof options.decimal_padding === "number") || false;
+    var i_pad_length = options.integer_padding;
+    var d_pad_length = options.decimal_padding;
+    var padding = (typeof options.padding === "number") || false;
+    var pad_length = options.padding;
+    var trunc = (options.trunc === true) || false;
+    var grouping = (options.grouping === true) || false;
+    var is_negative = (value < 0);
     if (typeof value !== "number") {
         console.warn("Tried to format a value but input was typeof: ", typeof value);
         return value;
@@ -293,14 +318,14 @@ function format(value, options) {
         if (is_negative) { //Remove minus sign if negative.
             str = str.substr(1);
         }
-        let separated = str.split('.'); //We only want to group the value before the decimal point.
+        var separated = str.split('.'); //We only want to group the value before the decimal point.
         str_arr = separated[0].split('');
         str = "";
         while (str_arr.length > 3) {
             str = " " + str_arr[str_arr.length - 3] + str_arr[str_arr.length - 2] + str_arr[str_arr.length - 1] + str;
             str_arr = str_arr.slice(0, str_arr.length - 3);
         }
-        let joined_arr = str_arr.join("");
+        var joined_arr = str_arr.join("");
         str = (joined_arr.length > 0) ? joined_arr + str : str;
         str += (separated.length > 1) ? "." + separated[1] : "";
         if (is_negative) { //Add minus sign if negative.
@@ -332,50 +357,52 @@ function format(value, options) {
     }
     return str;
 }
-function updateTranslations(dictionary_arr, warn = true, overwrite = true) {
+function updateTranslations(dictionary_arr, warn, overwrite) {
+    if (warn === void 0) { warn = true; }
+    if (overwrite === void 0) { overwrite = true; }
     translations = {};
-    dictionary_arr.forEach((dict, dict_index) => {
-        let prefix = dict.hasOwnProperty('prefix') ? dict.prefix : "";
-        let keys = Object.keys(dict);
-        keys.forEach((potential_lang) => {
+    dictionary_arr.forEach(function (dict, dict_index) {
+        var prefix = dict.hasOwnProperty('prefix') ? dict.prefix : "";
+        var keys = Object.keys(dict);
+        keys.forEach(function (potential_lang) {
             if (supported_languages.includes(potential_lang) === false) {
                 return;
             }
-            let lang = potential_lang;
-            const lang_in_dict = dict[lang];
+            var lang = potential_lang;
+            var lang_in_dict = dict[lang];
             if (!lang_in_dict) {
                 return;
             }
-            let keys_for_lang = Object.keys(lang_in_dict);
+            var keys_for_lang = Object.keys(lang_in_dict);
             if (translations.hasOwnProperty(lang) === false) {
-                let new_lang_translations = {};
-                keys_for_lang.forEach((key) => {
-                    new_lang_translations[prefix + key] = lang_in_dict[key];
+                var new_lang_translations_1 = {};
+                keys_for_lang.forEach(function (key) {
+                    new_lang_translations_1[prefix + key] = lang_in_dict[key];
                 });
-                translations[lang] = new_lang_translations;
+                translations[lang] = new_lang_translations_1;
             }
             else {
                 if (warn || !overwrite) {
-                    let updated_lang_translations = Object.assign({}, translations[lang]);
-                    keys_for_lang.forEach((translation_key) => {
-                        if (updated_lang_translations.hasOwnProperty(prefix + translation_key)) {
+                    var updated_lang_translations_1 = Object.assign({}, translations[lang]);
+                    keys_for_lang.forEach(function (translation_key) {
+                        if (updated_lang_translations_1.hasOwnProperty(prefix + translation_key)) {
                             if (warn) {
                                 console.warn("OH: Dictionary " + dict_index + " is conflicting with existing key '" + (prefix + translation_key) + "'.");
                             }
                             if (overwrite) {
-                                updated_lang_translations[prefix + translation_key] = lang_in_dict[translation_key];
+                                updated_lang_translations_1[prefix + translation_key] = lang_in_dict[translation_key];
                             }
                         }
-                        updated_lang_translations[prefix + translation_key] = lang_in_dict[translation_key];
+                        updated_lang_translations_1[prefix + translation_key] = lang_in_dict[translation_key];
                     });
-                    translations[lang] = updated_lang_translations;
+                    translations[lang] = updated_lang_translations_1;
                 }
                 else {
-                    let new_lang_translations = {};
-                    keys_for_lang.forEach((key) => {
-                        new_lang_translations[prefix + key] = lang_in_dict[key];
+                    var new_lang_translations_2 = {};
+                    keys_for_lang.forEach(function (key) {
+                        new_lang_translations_2[prefix + key] = lang_in_dict[key];
                     });
-                    translations[lang] = Object.assign({}, translations[lang], new_lang_translations);
+                    translations[lang] = Object.assign({}, translations[lang], new_lang_translations_2);
                 }
             }
         });
@@ -385,7 +412,7 @@ function addDictionary(dictionary) {
     config.dictionaries.push(dictionary);
     updateTranslations(config.dictionaries);
 }
-let funcs = {
+var funcs = {
     addDictionary: addDictionary,
     dateToMoment: dateToMoment,
     format: format,
@@ -403,10 +430,10 @@ let funcs = {
     translate: translate,
     translateTyped: translateTyped
 };
-let exported_funcs = Object.assign({}, funcs);
+var exported_funcs = Object.assign({}, funcs);
 function setConfig(config_opts) {
-    let invalid = false;
-    Object.keys(config_opts).forEach((key) => {
+    var invalid = false;
+    Object.keys(config_opts).forEach(function (key) {
         if (key === "dictionaries" && config.dictionaries.length > 0) {
             console.warn("OH: To add dictionaries after initial setConfig use 'OH.addDictionary()'");
             invalid = true;
@@ -426,10 +453,10 @@ function setConfig(config_opts) {
         config.lang = config.fallback_language;
     }
     if (config.date_locale) {
-        moment.locale(config.date_locale);
+        moment_1.default.locale(config.date_locale);
     }
     else {
-        moment.locale(config.lang);
+        moment_1.default.locale(config.lang);
     }
     if (Array.isArray(config.dictionaries) === false) {
         console.error("OH: 'dictionaries' prop required to be an array.");
@@ -448,6 +475,6 @@ function getLang() {
 function getFallbackLang() {
     return config.fallback_language;
 }
-export default exported_funcs;
+exports.default = exported_funcs;
 
 //# sourceMappingURL=index.js.map
