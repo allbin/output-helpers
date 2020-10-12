@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var moment_1 = require("moment");
+var tslib_1 = require("tslib");
+var moment_1 = tslib_1.__importDefault(require("moment"));
 moment_1.default.defineLocale('sv-SE', getDateLocale('sv-SE'));
 moment_1.default.defineLocale('en-US', getDateLocale('en-US'));
 moment_1.default.locale('en-US');
