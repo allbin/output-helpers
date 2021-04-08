@@ -1,5 +1,8 @@
 # output-helpers
 
+DEPRECATED! See comments of https://github.com/allbin/maintenance/issues/3.
+
+
 ## Usage
 
 `import oh from output-helpers`
