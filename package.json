@@ -19,7 +19,7 @@
         "gulp-typescript": "6.0.0-alpha.1",
         "gulp4": "4.0.2",
         "typescript": "3.x",
-        "moment": "2.22.2",
+        "moment": "2.29.4",
         "vinyl-buffer": "1.0.1",
         "tslint": "5.10.0",
         "tslint-eslint-rules": "5.3.1",
